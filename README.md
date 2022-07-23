@@ -1,13 +1,3 @@
-# Sample Hardhat Project
+A full stack NFT Market place with an idea that it will hold the NFTs related to crown of England i.e. NFTs of Royal house of Windsor from the Victorian era to the Elizabethan era. It may also include the crown jewels too. Its driven from the inspiration that I gather from the Queen, and from her sense of duties. Moreover, recently her majesty enjoyed the platinum jubilee services, and so this year was the great time to make this project. 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+Clone the repo, install the modules, and the run the projects. The project is still under development phase as it will be deployed to Polygon and binance smart chain testnets. REPORT THE BUGS AT adilnehal80@gmail.com
