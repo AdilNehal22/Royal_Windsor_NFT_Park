@@ -19,7 +19,7 @@ contract RoyalNFTPark is ERC721URIStorage {
     owner = payable(msg.sender);
   }
 
-  struct MarketItem {
+  struct NFT {
     uint256 tokenId;
     address payable seller;
     address payable owner;
@@ -27,7 +27,7 @@ contract RoyalNFTPark is ERC721URIStorage {
     bool sold;
   }
 
-  event MarketItemCreated (
+  event NFTWhichIsCreated (
     uint256 indexed tokenId,
     address seller,
     address owner,
@@ -35,7 +35,7 @@ contract RoyalNFTPark is ERC721URIStorage {
     bool sold
   );
 
-  mapping(uint256 => MarketItem) private IDgiventoMarketItem;
+  mapping(uint256 => NFT) private IDgiventoMarketItem;
 
   function createNFT(string memory tokenURI, uint256 price) public payable returns (uint) {
     _tokenIds.increment();
@@ -54,10 +54,10 @@ contract RoyalNFTPark is ERC721URIStorage {
   function createMarketItem(uint256 tokenId, uint256 price) private {
     require(price > 0, "price must be at least 1 wei");
     require(msg.value == listingPrice, "Price must be equal to listing price");
-    IDgiventoMarketItem[tokenId] = MarketItem(tokenId, payable(msg.sender), payable(address(this)), price, false);
+    IDgiventoMarketItem[tokenId] = NFT(tokenId, payable(msg.sender), payable(address(this)), price, false);
     //transfer the ownership of the item to this contract
     _transfer(msg.sender, address(this), tokenId);
-    emit MarketItemCreated(tokenId, msg.sender, address(this), price, false);
+    emit NFTWhichIsCreated(tokenId, msg.sender, address(this), price, false);
   }
 
   function createMarketSale(uint256 tokenId) public payable {
@@ -74,17 +74,17 @@ contract RoyalNFTPark is ERC721URIStorage {
     payable(seller).transfer(msg.value);
   }
   //fetch all the unsold nfts and return them
-  function fetchMarketItems() public view returns (MarketItem[] memory){
+  function fetchMarketItems() public view returns (NFT[] memory){
     uint allItemCount = _tokenIds.current();
     uint unsoldItemCount = _tokenIds.current() - _tokenSold.current();
     uint currentIndex = 0;
-    MarketItem[] memory items = new MarketItem[](unsoldItemCount);
+    NFT[] memory items = new NFT[](unsoldItemCount);
     for(uint i=0; i < allItemCount; i++){
       //this contract is owner so, unsold
       if(IDgiventoMarketItem[i+1].owner == address(this)){
         uint currentId = i + 1;
         //reference to current item
-        MarketItem storage currentItem = IDgiventoMarketItem[currentId];
+        NFT storage currentItem = IDgiventoMarketItem[currentId];
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }
@@ -92,7 +92,7 @@ contract RoyalNFTPark is ERC721URIStorage {
     return items;
   }
 
-  function getUserNFTs() public view returns (MarketItem[] memory) {
+  function getUserNFTs() public view returns (NFT[] memory) {
     uint allItemCount = _tokenIds.current();
     uint itemCount = 0;
     uint currentIndex = 0;
@@ -103,12 +103,12 @@ contract RoyalNFTPark is ERC721URIStorage {
       }
     }
     //and then use that 'count' to make a new array of user specific nfts and return them
-    MarketItem[] memory items = new MarketItem[](itemCount);
+    NFT[] memory items = new NFT[](itemCount);
     for (uint i = 0; i < allItemCount; i++) {
       if (IDgiventoMarketItem[i + 1].owner == msg.sender) {
         uint currentId = i + 1;
         //reference to current item
-        MarketItem storage currentItem = IDgiventoMarketItem[currentId];
+        NFT storage currentItem = IDgiventoMarketItem[currentId];
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }
@@ -117,7 +117,7 @@ contract RoyalNFTPark is ERC721URIStorage {
   }
 
   //that users have created themselves
-  function fetchItemsListed() public view returns (MarketItem[] memory) {
+  function fetchItemsListed() public view returns (NFT[] memory) {
     uint allItemCount = _tokenIds.current();
     uint itemCount = 0;
     uint currentIndex = 0;
@@ -128,12 +128,12 @@ contract RoyalNFTPark is ERC721URIStorage {
       }
     }
     //returning them
-    MarketItem[] memory items = new MarketItem[](itemCount);
+    NFT[] memory items = new NFT[](itemCount);
     for (uint i = 0; i < allItemCount; i++) {
       if (IDgiventoMarketItem[i + 1].seller == msg.sender) {
         uint currentId = i + 1;
         //reference to current item
-        MarketItem storage currentItem = IDgiventoMarketItem[currentId];
+        NFT storage currentItem = IDgiventoMarketItem[currentId];
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }
