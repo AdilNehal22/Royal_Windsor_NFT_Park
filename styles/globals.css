@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.header {
+  padding: 20px;
+  color: white;
+  font-size: 30px;
+  height: 1005px;
+}

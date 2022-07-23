@@ -6,7 +6,7 @@ import Web3Modal from 'web3modal';
 import { marketplaceAddress } from '../config';
 const NFTContract = require('../artifacts/contracts/NFTMarket.sol/RoyalNFTPark.json');
 
-export default function myOwnNFTS(){
+export default function MyOwnNFTS(){
   const[assets, setMyAssets] = useState([]);
   const[loading, setLoading] = useState('not-loaded');
 
@@ -29,8 +29,9 @@ export default function myOwnNFTS(){
       const metaData = await axios.get(tokenURI);
       console.log('metaData>>>>>>>>>', metaData)
       let nftPrice = await ethers.utils.formatUnits(i.price.toString(), 'ether');
+      let splittedNFTPrice = nftPrice.split('.')[0]
       let nftItem = {
-        nftPrice,
+        splittedNFTPrice,
         tokenId: i.tokenId.toNumber(),
         seller: i.seller,
         owner: i.owner,
@@ -41,11 +42,12 @@ export default function myOwnNFTS(){
       return nftItem
     })))
     setMyAssets(allNFTS)
+    console.log(assets)
     setLoading('loaded')
   }
 
-  if (loading === 'loaded' && !assets.length) return (
-    <h1 className="px-20 py-10 text-3xl">That's kinda sad, you never showed love to your Queen'</h1>
+  if (loading === "loaded" && !assets.length) return (
+    <h1 className="px-20 py-10 text-3xl">That is kinda sad, you never showed love to your Queen</h1>
   )
   return(
     <div className="flex justify-center">
@@ -54,9 +56,9 @@ export default function myOwnNFTS(){
           {
             assets.map((item, i)=>(
               <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={assets.image} className="rounded" />
+                <img src={item.image} className="rounded" />
                 <div className="p-4 bg-black">
-                  <p className="text-2xl font-bold text-white">Price - {assets.nftPrice} Eth</p>
+                  <p className="text-2xl font-bold text-white">Price - {item.splittedNFTPrice} Eth</p>
                 </div>
               </div>
             ))

@@ -25,13 +25,16 @@ export default function Dashboard(){
     const nftContract = new ethers.Contract(marketplaceAddress, NFTContract.abi, signer);
     const nfts = await nftContract.fetchItemsListed();
     const allNFTS = await Promise.all(nfts.map((async i => {
+      console.log('i.price>>>>>>>>>', i.price.toString())
       const tokenURI = await nftContract.tokenURI(i.tokenId);
       console.log('tokenURI>>>>>>>>>>>', tokenURI)
       const metaData = await axios.get(tokenURI);
       console.log('metaData>>>>>>>>>', metaData)
       let nftPrice = await ethers.utils.formatUnits(i.price.toString(), 'ether');
+      let splittedNFTPrice = nftPrice.split('.')[0]
+      console.log('nft price', splittedNFTPrice)
       let nftItem = {
-        nftPrice,
+        splittedNFTPrice,
         tokenId: i.tokenId.toNumber(),
         seller: i.seller,
         owner: i.owner,
@@ -43,25 +46,31 @@ export default function Dashboard(){
     })))
     const soldedNFTS = await allNFTS.filter(i => i.sold);
     setNfts(allNFTS);
+    console.log('NFTS>>>>>>>>>>>>>', NFTS)
     setSoldNFTS(soldedNFTS);
     setLoading('loaded')
   }
   return(
     <div>
-      <div className='p-4'>
+      <div className='px-4' style={{ maxWidth: '600px' }}>
         <h2 className='text-2xl py-2'> NFTS Created </h2>
           <div className='grid grid-cols-1 sm:grid-clos2 lg:grid-col-4 gap-4 pt-4'>
             {
               NFTS.map((item, i) => (
                 <div key={i} className="border shadow rounded-xl overflow-hidden">
-                  <img src={item.image} className='rounded' />
-                  <div className='p-4' bg-black>
-                    <p className="text-2xl font-bold text-white">Price - {item.nftPrice} Eth</p>
+                  <img src={item.image} />
+                  <div className="p-4">
+                    <p style={{ height: '64px' }} className="text-2xl font-semibold">{item.name}</p>
+                    <div style={{ height: '70px', overflow: 'hidden' }}>
+                      <p className="text-black-400">{item.description}</p>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-black">
+                    <p className="text-2xl font-bold text-white">{item.splittedNFTPrice} ETH</p>
                   </div>
                 </div>
               ))
             }
-          </div>
       </div>
       <div className='px-4'>
         {
@@ -70,11 +79,11 @@ export default function Dashboard(){
               <h2 className='text-2xl py-2'> NFTS Sold</h2>
               <div className='grid grid-cols-1 sm:grid-clos2 lg:grid-col-4 gap-4 pt-4'>
                 {
-                  soldedNFTS.map((item, i) => (
+                  soldNFTS.map((item, i) => (
                     <div key={i} className="border shadow rounded-xl overflow-hidden">
                       <img src={item.image} className='rounded' />
                       <div className='p-4 bg-black'>
-                        <p className='text-2xl font-bold text-white'> Price - {item.nftPrice} Eth</p>
+                        <p className='text-2xl font-bold text-white'> Price - {item.splittedNFTPrice} Eth</p>
                       </div>
                     </div>
                   ))
@@ -84,6 +93,7 @@ export default function Dashboard(){
           )
         }
       </div>
+    </div>
     </div>
   )
 }
